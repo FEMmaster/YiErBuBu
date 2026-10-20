@@ -35,8 +35,8 @@ internal sealed class SceneView : FrameworkElement
     private Point _bubuPaw;
     private bool _pawsInitialized;
     // 人物位置和尺寸
-    private static readonly Rect BubuBox = new(170, 35, 122, 125);
-    private static readonly Rect YierBox = new(275, 59, 136, 138);
+    private static readonly Rect BubuBox = new(173, 38, 122, 125);
+    private static readonly Rect YierBox = new(278, 62, 136, 138);
     
     // 肩膀相对位置，取值通常为 0~1
     private static readonly Point BubuShoulderUV = new(0.34, 0.87);
@@ -50,8 +50,8 @@ internal sealed class SceneView : FrameworkElement
     private const double DeviceAngle = 10;
     private const double RotateX = BaseW / 2, RotateY = BaseH / 2;
     // 鼠标垫的唯一几何定义。鼠标中心从这四个顶点自动计算。
-    private static readonly Point MousePadA = new(101, 150);
-    private static readonly Point MousePadB = new(200, 165);
+    private static readonly Point MousePadA = new(108, 155);
+    private static readonly Point MousePadB = new(220, 170);
     private static readonly Point MousePadC = new(188, 235);
     private static readonly Point MousePadD = new(77, 217);
 
