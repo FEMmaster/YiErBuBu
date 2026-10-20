@@ -157,24 +157,35 @@ internal sealed class SceneView : FrameworkElement
             new Rect(259, 78, 148, 151));
 
         // The equipment occludes the forearms where they pass behind it.
+        
+        // 1. 绘制键盘和鼠标
         d.PushTransform(new RotateTransform(DeviceAngle, RotateX, RotateY));
         DrawMousePadAndMouse(d);
         DrawKeyboard(d);
+        d.Pop();  // 关键：先结束键鼠的旋转变换
         
+        // 2. 绘制可以自由伸缩的手臂
         Point restingBubuPaw = new(228, 171);
-        DrawArm(d, BubuShoulder, _bubuPaw, "#D5A172", "#3F221C", 8.5);
-        DrawArm(d, BubuOtherShoulder, restingBubuPaw, "#D5A172", "#3F221C", 8);
-        DrawArm(d, YierLeftShoulder, _yierLeftPaw, "#FFFDF8", "#351716", 9);
-        DrawArm(d, YierRightShoulder, _yierRightPaw, "#FFFDF8", "#351716", 9);
         
-        d.Pop();
-
-        // Hands are the only anatomy drawn in front of the keycaps.
+        DrawArm(d, BubuShoulder, _bubuPaw,
+            "#D5A172", "#3F221C", 8.5);
+        
+        DrawArm(d, BubuOtherShoulder, restingBubuPaw,
+            "#D5A172", "#3F221C", 8);
+        
+        DrawArm(d, YierLeftShoulder, _yierLeftPaw,
+            "#FFFDF8", "#351716", 9);
+        
+        DrawArm(d, YierRightShoulder, _yierRightPaw,
+            "#FFFDF8", "#351716", 9);
+        
+        // 3. 最后绘制四只爪子
         DrawPaw(d, BubuLeft, _bubuPaw, 42, 31);
         DrawPaw(d, BubuRight, restingBubuPaw, 42, 31);
         
         DrawPaw(d, YierLeft, _yierLeftPaw, 42, 32);
         DrawPaw(d, YierRight, _yierRightPaw, 42, 32);
+
         d.Pop();
     }
 
