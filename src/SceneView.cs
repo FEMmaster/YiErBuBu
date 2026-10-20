@@ -325,7 +325,15 @@ internal sealed class SceneView : FrameworkElement
                 new Point(p1.X,p1.Y+2),new Point(p2.X,p2.Y+2),new Point(p3.X,p3.Y+2));
             DrawQuad(d,held?"#F0B89C":"#FFF9EF",held?"#B57258":"#C6B4A5",p0,p1,p2,p3);
             Point center=ProjectKey((u0+u1)/2,(v0+v1)/2,a,b,c,e);
-            Label(d,k.Caption,center.X,center.Y-4,6.2,held?"#7D4C3A":"#6F615A");
+            
+            d.PushTransform(new RotateTransform(
+                180, center.X, center.Y));
+            
+            Label(d, k.Caption, center.X, center.Y - 4, 6.2,
+                held ? "#7D4C3A" : "#6F615A");
+            
+            d.Pop();
+
         }
     }
     private static Point ProjectKey(double u,double v,Point a,Point b,Point c,Point e)=>
