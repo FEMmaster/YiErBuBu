@@ -35,7 +35,7 @@ internal sealed class SceneView : FrameworkElement
     private Point _bubuPaw = new(174, 161);
     // 人物位置和尺寸
     private static readonly Rect BubuBox = new(137, 48, 122, 125);
-    private static readonly Rect YierBox = new(259, 63, 148, 151);
+    private static readonly Rect YierBox = new(263, 67, 141, 143);
     
     // 肩膀相对位置，取值通常为 0~1
     private static readonly Point BubuShoulderUV = new(0.34, 0.87);
@@ -183,18 +183,24 @@ internal sealed class SceneView : FrameworkElement
         Point yierLeftShoulder = GetShoulder(YierBox, YierLeftShoulderUV);
         Point yierRightShoulder = GetShoulder(YierBox, YierRightShoulderUV);
         
+        // 四个肩膀锚点整体向左移动 5 个单位
+        bubuShoulder.Offset(-5, 0);
+        bubuOtherShoulder.Offset(-5, 0);
+        yierLeftShoulder.Offset(-5, 0);
+        yierRightShoulder.Offset(-5, 0);
+        
         // 动态手臂：起点跟随人物，终点跟随爪子
         DrawArm(d, bubuShoulder, _bubuPaw,
-            "#D5A172", "#3F221C", 8.5);
+            "#D5A172", "#3F221C", 10);
         
         DrawArm(d, bubuOtherShoulder, restingBubuPaw,
-            "#D5A172", "#3F221C", 8);
+            "#D5A172", "#3F221C", 9.5);
         
         DrawArm(d, yierLeftShoulder, _yierLeftPaw,
-            "#FFFDF8", "#351716", 9);
+            "#FFFDF8", "#351716", 11);
         
         DrawArm(d, yierRightShoulder, _yierRightPaw,
-            "#FFFDF8", "#351716", 9);
+            "#FFFDF8", "#351716", 11);
 
         
         // 3. 最后绘制四只爪子
