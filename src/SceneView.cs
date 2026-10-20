@@ -34,7 +34,7 @@ internal sealed class SceneView : FrameworkElement
     private DateTime _bubuBlinkUntil, _yierBlinkUntil;
     private Point _bubuPaw = new(174, 161);
     // 人物位置和尺寸
-    private static readonly Rect BubuBox = new(147, 48, 122, 125);
+    private static readonly Rect BubuBox = new(160, 35, 122, 125);
     private static readonly Rect YierBox = new(275, 59, 136, 138);
     
     // 肩膀相对位置，取值通常为 0~1
