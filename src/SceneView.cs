@@ -33,11 +33,16 @@ internal sealed class SceneView : FrameworkElement
     private DateTime _nextYierBlink = DateTime.UtcNow.AddSeconds(4);
     private DateTime _bubuBlinkUntil, _yierBlinkUntil;
     private Point _bubuPaw = new(174, 161);
-    private static readonly Point BubuShoulder = new(204, 153);
-    private static readonly Point BubuOtherShoulder = new(226, 158);
+    // 人物位置和尺寸
+    private static readonly Rect BubuBox = new(137, 48, 122, 125);
+    private static readonly Rect YierBox = new(259, 63, 148, 151);
     
-    private static readonly Point YierLeftShoulder = new(288, 188);
-    private static readonly Point YierRightShoulder = new(382, 191);
+    // 肩膀相对位置，取值通常为 0~1
+    private static readonly Point BubuShoulderUV = new(0.34, 0.87);
+    private static readonly Point BubuOtherShoulderUV = new(0.78, 0.87);
+    
+    private static readonly Point YierLeftShoulderUV = new(0.25, 0.87);
+    private static readonly Point YierRightShoulderUV = new(0.78, 0.87);
     private Point _yierLeftPaw = new(319, 203);
     private Point _yierRightPaw = new(377, 211);
     private DateTime _lastStep = DateTime.UtcNow;
@@ -151,10 +156,13 @@ internal sealed class SceneView : FrameworkElement
         // Neither a forearm nor its shoulder line is ever drawn over a face.
 
 
-        DrawCharacter(d, DateTime.UtcNow < _bubuBlinkUntil ? BubuBlink : Bubu,
-            new Rect(137, 48, 122, 125));
-        DrawCharacter(d, DateTime.UtcNow < _yierBlinkUntil ? YierBlink : Yier,
-            new Rect(259, 78, 148, 151));
+        DrawCharacter(d,
+            DateTime.UtcNow < _bubuBlinkUntil ? BubuBlink : Bubu,
+            BubuBox);
+        
+        DrawCharacter(d,
+            DateTime.UtcNow < _yierBlinkUntil ? YierBlink : Yier,
+            YierBox);
 
         // The equipment occludes the forearms where they pass behind it.
         
@@ -167,17 +175,27 @@ internal sealed class SceneView : FrameworkElement
         // 2. 绘制可以自由伸缩的手臂
         Point restingBubuPaw = new(228, 171);
         
-        DrawArm(d, BubuShoulder, _bubuPaw,
+
+        // 根据人物主体实时计算肩膀位置
+        Point bubuShoulder = GetShoulder(BubuBox, BubuShoulderUV);
+        Point bubuOtherShoulder = GetShoulder(BubuBox, BubuOtherShoulderUV);
+        
+        Point yierLeftShoulder = GetShoulder(YierBox, YierLeftShoulderUV);
+        Point yierRightShoulder = GetShoulder(YierBox, YierRightShoulderUV);
+        
+        // 动态手臂：起点跟随人物，终点跟随爪子
+        DrawArm(d, bubuShoulder, _bubuPaw,
             "#D5A172", "#3F221C", 8.5);
         
-        DrawArm(d, BubuOtherShoulder, restingBubuPaw,
+        DrawArm(d, bubuOtherShoulder, restingBubuPaw,
             "#D5A172", "#3F221C", 8);
         
-        DrawArm(d, YierLeftShoulder, _yierLeftPaw,
+        DrawArm(d, yierLeftShoulder, _yierLeftPaw,
             "#FFFDF8", "#351716", 9);
         
-        DrawArm(d, YierRightShoulder, _yierRightPaw,
+        DrawArm(d, yierRightShoulder, _yierRightPaw,
             "#FFFDF8", "#351716", 9);
+
         
         // 3. 最后绘制四只爪子
         DrawPaw(d, BubuLeft, _bubuPaw, 42, 31);
@@ -195,6 +213,29 @@ internal sealed class SceneView : FrameworkElement
         d.DrawImage(bmp, box);
         d.Pop();
     }
+    
+    private static Point GetShoulder(Rect box, Point uv)
+    {
+        // 计算肩膀在未旋转人物图片中的位置
+        double x = box.X + box.Width * uv.X;
+        double y = box.Y + box.Height * uv.Y;
+    
+        // 人物中心
+        double cx = box.X + box.Width / 2;
+        double cy = box.Y + box.Height / 2;
+    
+        // 与 DrawCharacter 使用相同的旋转角度
+        double angle = 10 * Math.PI / 180;
+    
+        double dx = x - cx;
+        double dy = y - cy;
+    
+        return new Point(
+            cx + dx * Math.Cos(angle) - dy * Math.Sin(angle),
+            cy + dx * Math.Sin(angle) + dy * Math.Cos(angle)
+        );
+    }
+
     private static void DrawArm(DrawingContext d, Point shoulder, Point hand,
         string furColor, string outlineColor, double width)
     {
