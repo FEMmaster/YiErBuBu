@@ -33,7 +33,7 @@ internal sealed class PetWindow : Window
         _scene.ContextMenu = ContextMenu;
         _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
         _timer.Tick += (_, _) => Tick();
-        Loaded += (_, _) => { StartListener(); CreateTray(); _timer.Start(); };
+        Loaded += (_, _) => { StartListener(); _timer.Start(); };
         Closed += (_, _) => { _timer.Stop(); _listener?.Dispose(); _tray?.Dispose(); };
     }
     private ContextMenu CreateMenu()
