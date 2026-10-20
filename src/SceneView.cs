@@ -168,9 +168,16 @@ internal sealed class SceneView : FrameworkElement
         
         // 1. 绘制键盘和鼠标
         d.PushTransform(new RotateTransform(DeviceAngle, RotateX, RotateY));
+        
+        // 鼠标保持原样
         DrawMousePadAndMouse(d);
+        
+        // 键盘以中心为基准缩小 10%
+        d.PushTransform(new ScaleTransform(0.90, 0.90, 342, 208));
         DrawKeyboard(d);
-        d.Pop();  // 关键：先结束键鼠的旋转变换
+        d.Pop();
+        
+        d.Pop();
         
         // 2. 绘制可以自由伸缩的手臂
         Point restingBubuPaw = new(228, 171);
