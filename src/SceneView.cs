@@ -293,7 +293,7 @@ internal sealed class SceneView : FrameworkElement
         t.Children.Add(new TranslateTransform(44, -18));
         d.PushTransform(t);
         DrawQuad(d, "#F7D6CF", "#8A6A64",
-            new Point(101,180),new Point(178,191),new Point(178,230),new Point(77,217));
+            new Point(101,180),new Point(180,193),new Point(178,230),new Point(77,217));
         double mx = 127 + Math.Clamp(MouseX,-1,1)*5;
         double my = 203 + Math.Clamp(MouseY,-1,1)*2;
         d.PushTransform(new RotateTransform(35,mx,my));
