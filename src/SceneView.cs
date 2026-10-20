@@ -33,10 +33,11 @@ internal sealed class SceneView : FrameworkElement
     private DateTime _nextYierBlink = DateTime.UtcNow.AddSeconds(4);
     private DateTime _bubuBlinkUntil, _yierBlinkUntil;
     private Point _bubuPaw = new(174, 161);
-    private static readonly Point BubuShoulder = new(215, 155);
-    private static readonly Point BubuOtherShoulder = new(233, 152);
-    private static readonly Point YierLeftShoulder = new(293, 191);
-    private static readonly Point YierRightShoulder = new(376, 193);
+    private static readonly Point BubuShoulder = new(204, 153);
+    private static readonly Point BubuOtherShoulder = new(226, 158);
+    
+    private static readonly Point YierLeftShoulder = new(288, 188);
+    private static readonly Point YierRightShoulder = new(382, 191);
     private Point _yierLeftPaw = new(319, 203);
     private Point _yierRightPaw = new(377, 211);
     private DateTime _lastStep = DateTime.UtcNow;
@@ -166,10 +167,10 @@ internal sealed class SceneView : FrameworkElement
         d.Pop();
 
         // Hands are the only anatomy drawn in front of the keycaps.
-        DrawPaw(d, BubuLeft, _bubuPaw, 25, 18);
-        DrawPaw(d, BubuRight, restingBubuPaw, 26, 19);
-        DrawPaw(d, YierLeft, _yierLeftPaw, 25, 19);
-        DrawPaw(d, YierRight, _yierRightPaw, 25, 19);
+        DrawPaw(d, BubuLeft, _bubuPaw, 34, 25);
+        DrawPaw(d, BubuRight, restingBubuPaw, 34, 25);
+        DrawPaw(d, YierLeft, _yierLeftPaw, 34, 26);
+        DrawPaw(d, YierRight, _yierRightPaw, 34, 26);
         d.Pop();
     }
 
