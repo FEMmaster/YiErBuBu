@@ -32,7 +32,8 @@ internal sealed class SceneView : FrameworkElement
     private DateTime _nextBubuBlink = DateTime.UtcNow.AddSeconds(3);
     private DateTime _nextYierBlink = DateTime.UtcNow.AddSeconds(4);
     private DateTime _bubuBlinkUntil, _yierBlinkUntil;
-    private Point _bubuPaw = new(174, 161);
+    private Point _bubuPaw;
+    private bool _pawsInitialized;
     // 人物位置和尺寸
     private static readonly Rect BubuBox = new(170, 35, 122, 125);
     private static readonly Rect YierBox = new(275, 59, 136, 138);
@@ -43,11 +44,21 @@ internal sealed class SceneView : FrameworkElement
     
     private static readonly Point YierLeftShoulderUV = new(0.25, 0.87);
     private static readonly Point YierRightShoulderUV = new(0.78, 0.87);
-    private Point _yierLeftPaw = new(319, 203);
-    private Point _yierRightPaw = new(377, 211);
+    private Point _yierLeftPaw;
+    private Point _yierRightPaw;
     private DateTime _lastStep = DateTime.UtcNow;
     private const double DeviceAngle = 10;
     private const double RotateX = BaseW / 2, RotateY = BaseH / 2;
+    // 鼠标垫的唯一几何定义。鼠标中心从这四个顶点自动计算。
+    private static readonly Point MousePadA = new(101, 150);
+    private static readonly Point MousePadB = new(200, 165);
+    private static readonly Point MousePadC = new(188, 235);
+    private static readonly Point MousePadD = new(77, 217);
+
+    // 保持鼠标垫已有的尺寸、位置和角度不变。
+    private const double PadPivotX = 127, PadPivotY = 203;
+    private const double PadScale = .88;
+    private const double PadTranslateX = 44, PadTranslateY = -18;
 
     private static BitmapImage Load(string name)
     {
@@ -74,16 +85,28 @@ internal sealed class SceneView : FrameworkElement
             _yierBlinkUntil = now.AddMilliseconds(135);
             _nextYierBlink = now.AddSeconds(2.5 + _random.NextDouble() * 5);
         }
-        // Device motion uses exactly the same scaling/rotation as the rendered mouse.
-        double localX = 127 + Math.Clamp(MouseX, -1, 1) * 5;
-        double localY = 203 + Math.Clamp(MouseY, -1, 1) * 2;
-        Point mouse = new(127 + (localX - 127) * .88 + 44,
-                          203 + (localY - 203) * .88 - 18);
-        mouse = RotateDevice(mouse);
-        var bubuTarget = new Point(mouse.X, mouse.Y - (MouseLeft || MouseRight ? 1 : 6));
+        // 待机爪子靠近肩膀；肩膀与人物使用完全相同的旋转坐标。
+        Point bubuRest = RestPaw(ShoulderWorld(BubuBox, BubuShoulderUV), -12, 13);
+        Point yierLeftRest = RestPaw(ShoulderWorld(YierBox, YierLeftShoulderUV), -11, 14);
+        Point yierRightRest = RestPaw(ShoulderWorld(YierBox, YierRightShoulderUV), 11, 14);
+
+        if (!_pawsInitialized)
+        {
+            _bubuPaw = bubuRest;
+            _yierLeftPaw = yierLeftRest;
+            _yierRightPaw = yierRightRest;
+            _pawsInitialized = true;
+        }
+
+        // 鼠标中心由鼠标垫四个顶点得出。与绘制阶段共享同一套变换。
+        Point mouse = RotateDevice(MousePadLocalToScene(GetMouseLocalPosition()));
+        bool mouseActive = MouseLeft || MouseRight || MousePulse > .04;
+        Point bubuTarget = mouseActive
+            ? new Point(mouse.X, mouse.Y - (MouseLeft || MouseRight ? 1 : 6))
+            : bubuRest;
         _bubuPaw = Approach(_bubuPaw, bubuTarget, dt, 17);
 
-        Point leftTarget = new(319, 203), rightTarget = new(377, 211);
+        Point leftTarget = yierLeftRest, rightTarget = yierRightRest;
         bool leftDown = false, rightDown = false;
         foreach (int vk in HeldKeys)
         {
@@ -110,10 +133,36 @@ internal sealed class SceneView : FrameworkElement
             else { rightTarget = p; rightDown = true; }
         }
         _yierLeftPaw = Approach(_yierLeftPaw,
-            new Point(leftTarget.X, leftTarget.Y - (leftDown ? 0 : 6)), dt, 20);
+            leftDown ? leftTarget : yierLeftRest, dt, 20);
         _yierRightPaw = Approach(_yierRightPaw,
-            new Point(rightTarget.X, rightTarget.Y - (rightDown ? 0 : 6)), dt, 20);
+            rightDown ? rightTarget : yierRightRest, dt, 20);
     }
+
+    // 四边形顶点平均值：改变顶点后鼠标中心自动随之更新。
+    private static Point MousePadCenter() => new(
+        (MousePadA.X + MousePadB.X + MousePadC.X + MousePadD.X) / 4,
+        (MousePadA.Y + MousePadB.Y + MousePadC.Y + MousePadD.Y) / 4);
+
+    private Point GetMouseLocalPosition()
+    {
+        Point center = MousePadCenter();
+        return new Point(center.X + Math.Clamp(MouseX, -1, 1) * 5,
+                         center.Y + Math.Clamp(MouseY, -1, 1) * 2);
+    }
+
+    private static Point MousePadLocalToScene(Point local) => new(
+        PadPivotX + (local.X - PadPivotX) * PadScale + PadTranslateX,
+        PadPivotY + (local.Y - PadPivotY) * PadScale + PadTranslateY);
+
+    private static Point ShoulderWorld(Rect box, Point uv)
+    {
+        Point p = GetShoulder(box, uv);
+        p.Offset(-5, 0); // 保留你原先向左调整肩膀的设定
+        return p;
+    }
+
+    private static Point RestPaw(Point shoulder, double dx, double dy) =>
+        new(shoulder.X + dx, shoulder.Y + dy);
 
     private static Point LimitReach(Point target, Point shoulder, double reach)
     {
@@ -173,22 +222,16 @@ internal sealed class SceneView : FrameworkElement
         d.Pop();
                 
         // 2. 绘制可以自由伸缩的手臂
-        Point restingBubuPaw = new(228, 171);
+        Point restingBubuPaw = RestPaw(
+            ShoulderWorld(BubuBox, BubuOtherShoulderUV), 11, 13);
         
 
-        // 根据人物主体实时计算肩膀位置
-        Point bubuShoulder = GetShoulder(BubuBox, BubuShoulderUV);
-        Point bubuOtherShoulder = GetShoulder(BubuBox, BubuOtherShoulderUV);
-        
-        Point yierLeftShoulder = GetShoulder(YierBox, YierLeftShoulderUV);
-        Point yierRightShoulder = GetShoulder(YierBox, YierRightShoulderUV);
-        
-        // 四个肩膀锚点整体向左移动 5 个单位
-        bubuShoulder.Offset(-5, 0);
-        bubuOtherShoulder.Offset(-5, 0);
-        yierLeftShoulder.Offset(-5, 0);
-        yierRightShoulder.Offset(-5, 0);
-        
+        // 所有肩膀使用相同的角色旋转+偏移计算。
+        Point bubuShoulder = ShoulderWorld(BubuBox, BubuShoulderUV);
+        Point bubuOtherShoulder = ShoulderWorld(BubuBox, BubuOtherShoulderUV);
+        Point yierLeftShoulder = ShoulderWorld(YierBox, YierLeftShoulderUV);
+        Point yierRightShoulder = ShoulderWorld(YierBox, YierRightShoulderUV);
+
         // 动态手臂：起点跟随人物，终点跟随爪子
         DrawArm(d, bubuShoulder, _bubuPaw,
             "#D5A172", "#3F221C", 10);
@@ -289,13 +332,14 @@ internal sealed class SceneView : FrameworkElement
     private void DrawMousePadAndMouse(DrawingContext d)
     {
         var t = new TransformGroup();
-        t.Children.Add(new ScaleTransform(.88, .88, 127, 203));
-        t.Children.Add(new TranslateTransform(44, -18));
+        t.Children.Add(new ScaleTransform(PadScale, PadScale, PadPivotX, PadPivotY));
+        t.Children.Add(new TranslateTransform(PadTranslateX, PadTranslateY));
         d.PushTransform(t);
         DrawQuad(d, "#F7D6CF", "#8A6A64",
-            new Point(101,140),new Point(190,153),new Point(188,230),new Point(77,217));
-        double mx = 127 + Math.Clamp(MouseX,-1,1)*5;
-        double my = 203 + Math.Clamp(MouseY,-1,1)*2;
+            MousePadA, MousePadB, MousePadC, MousePadD);
+        Point localMouse = GetMouseLocalPosition();
+        double mx = localMouse.X;
+        double my = localMouse.Y;
         d.PushTransform(new RotateTransform(35,mx,my));
         Ellipse(d, "#FFF9F4", "#866B64", mx, my, 12, 19, 1.6);
         Line(d,"#8A6F68",1.4,mx,my+19,mx,my-1);
