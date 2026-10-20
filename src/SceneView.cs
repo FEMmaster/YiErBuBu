@@ -170,10 +170,11 @@ internal sealed class SceneView : FrameworkElement
         d.Pop();
 
         // Hands are the only anatomy drawn in front of the keycaps.
-        DrawPaw(d, BubuLeft, _bubuPaw, 34, 25);
-        DrawPaw(d, BubuRight, restingBubuPaw, 34, 25);
-        DrawPaw(d, YierLeft, _yierLeftPaw, 34, 26);
-        DrawPaw(d, YierRight, _yierRightPaw, 34, 26);
+        DrawPaw(d, BubuLeft, _bubuPaw, 42, 31);
+        DrawPaw(d, BubuRight, restingBubuPaw, 42, 31);
+        
+        DrawPaw(d, YierLeft, _yierLeftPaw, 42, 32);
+        DrawPaw(d, YierRight, _yierRightPaw, 42, 32);
         d.Pop();
     }
 
@@ -238,7 +239,7 @@ internal sealed class SceneView : FrameworkElement
         double mx = 127 + Math.Clamp(MouseX,-1,1)*5;
         double my = 203 + Math.Clamp(MouseY,-1,1)*2;
         d.PushTransform(new RotateTransform(35,mx,my));
-        Ellipse(d,"#FFF9F4","#866B64",mx,my,16,25,2);
+        Ellipse(d, "#FFF9F4", "#866B64", mx, my, 12, 19, 1.6);
         Line(d,"#8A6F68",1.4,mx,my+19,mx,my-1);
         if(MouseLeft) Ellipse(d,"#F1BBB2",null,mx-6,my+8,6,8);
         if(MouseRight) Ellipse(d,"#F1BBB2",null,mx+6,my+8,6,8);
