@@ -168,17 +168,10 @@ internal sealed class SceneView : FrameworkElement
         
         // 1. 绘制键盘和鼠标
         d.PushTransform(new RotateTransform(DeviceAngle, RotateX, RotateY));
-        
-        // 鼠标保持原样
         DrawMousePadAndMouse(d);
-        
-        // 键盘以中心为基准缩小 10%
-        d.PushTransform(new ScaleTransform(0.90, 0.90, 342, 208));
         DrawKeyboard(d);
         d.Pop();
-        
-        d.Pop();
-        
+                
         // 2. 绘制可以自由伸缩的手臂
         Point restingBubuPaw = new(228, 171);
         
@@ -300,7 +293,7 @@ internal sealed class SceneView : FrameworkElement
         t.Children.Add(new TranslateTransform(44, -18));
         d.PushTransform(t);
         DrawQuad(d, "#F7D6CF", "#8A6A64",
-            new Point(101,183),new Point(158,194),new Point(178,224),new Point(77,211));
+            new Point(101,180),new Point(178,191),new Point(178,230),new Point(77,217));
         double mx = 127 + Math.Clamp(MouseX,-1,1)*5;
         double my = 203 + Math.Clamp(MouseY,-1,1)*2;
         d.PushTransform(new RotateTransform(35,mx,my));
