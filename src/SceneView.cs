@@ -149,11 +149,7 @@ internal sealed class SceneView : FrameworkElement
 
         // Anatomical order: arms emerge FROM BEHIND the bodies.
         // Neither a forearm nor its shoulder line is ever drawn over a face.
-        Point restingBubuPaw = new(228, 171);
-        DrawArm(d, BubuShoulder, _bubuPaw, "#D5A172", "#3F221C", 8.5);
-        DrawArm(d, BubuOtherShoulder, restingBubuPaw, "#D5A172", "#3F221C", 8);
-        DrawArm(d, YierLeftShoulder, _yierLeftPaw, "#FFFDF8", "#351716", 9);
-        DrawArm(d, YierRightShoulder, _yierRightPaw, "#FFFDF8", "#351716", 9);
+
 
         DrawCharacter(d, DateTime.UtcNow < _bubuBlinkUntil ? BubuBlink : Bubu,
             new Rect(137, 48, 122, 125));
@@ -164,6 +160,13 @@ internal sealed class SceneView : FrameworkElement
         d.PushTransform(new RotateTransform(DeviceAngle, RotateX, RotateY));
         DrawMousePadAndMouse(d);
         DrawKeyboard(d);
+        
+        Point restingBubuPaw = new(228, 171);
+        DrawArm(d, BubuShoulder, _bubuPaw, "#D5A172", "#3F221C", 8.5);
+        DrawArm(d, BubuOtherShoulder, restingBubuPaw, "#D5A172", "#3F221C", 8);
+        DrawArm(d, YierLeftShoulder, _yierLeftPaw, "#FFFDF8", "#351716", 9);
+        DrawArm(d, YierRightShoulder, _yierRightPaw, "#FFFDF8", "#351716", 9);
+        
         d.Pop();
 
         // Hands are the only anatomy drawn in front of the keycaps.
