@@ -1,3 +1,5 @@
+using Microsoft.Win32;
+using System.Diagnostics;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,9 +50,89 @@ internal sealed class PetWindow : Window
         Add(menu, "暂停 / 恢复输入动画", TogglePause);
         Add(menu, "重新启动键鼠监听", StartListener);
         menu.Items.Add(new Separator());
+        var autoStartItem = new MenuItem
+        {
+            Header = "开机自启",
+            IsCheckable = true,
+            IsChecked = IsAutoStartEnabled()
+        };
+        
+        autoStartItem.Click += (_, _) =>
+        {
+            try
+            {
+                SetAutoStart(autoStartItem.IsChecked);
+            }
+            catch (Exception ex)
+            {
+                autoStartItem.IsChecked = IsAutoStartEnabled();
+        
+                MessageBox.Show(
+                    "修改开机自启失败：" + ex.Message,
+                    "一二和布布",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+        };
+        
+        menu.Items.Add(autoStartItem);
+        menu.Items.Add(new Separator());
         Add(menu, "退出", Close);
         return menu;
     }
+    
+private const string AutoStartName = "YiErBuBu";
+
+private const string AutoStartRegistryPath =
+    @"Software\Microsoft\Windows\CurrentVersion\Run";
+
+// 判断是否已经启用开机自启
+private static bool IsAutoStartEnabled()
+{
+    using var key = Registry.CurrentUser.OpenSubKey(
+        AutoStartRegistryPath, false);
+
+    return key?.GetValue(AutoStartName) is string;
+}
+
+// 开启或关闭开机自启
+private static void SetAutoStart(bool enabled)
+{
+    using var key = Registry.CurrentUser.OpenSubKey(
+        AutoStartRegistryPath, true);
+
+    if (key == null)
+        throw new InvalidOperationException(
+            "无法打开 Windows 启动项注册表。");
+
+    if (enabled)
+    {
+        string exePath = Environment.ProcessPath
+            ?? throw new InvalidOperationException(
+                "无法获取程序路径。");
+
+        // 避免注册到 dotnet.exe 或其他启动宿主
+        if (!string.Equals(
+            System.IO.Path.GetFileName(exePath),
+            "YiErBuBu.exe",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                "请使用发布后的 YiErBuBu.exe 启动程序，" +
+                "再开启开机自启。");
+        }
+
+        key.SetValue(
+            AutoStartName,
+            $"\"{exePath}\"",
+            RegistryValueKind.String);
+    }
+    else
+    {
+        key.DeleteValue(AutoStartName, false);
+    }
+}
+
     private static void Add(ContextMenu menu, string header, Action action)
     {
         var item = new MenuItem { Header = header };
