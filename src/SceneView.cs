@@ -52,8 +52,8 @@ internal sealed class SceneView : FrameworkElement
     // 鼠标垫的唯一几何定义。鼠标中心从这四个顶点自动计算。
     private static readonly Point MousePadA = new(151, 175);
     private static readonly Point MousePadB = new(227, 188);
-    private static readonly Point MousePadC = new(195, 235);
-    private static readonly Point MousePadD = new(110, 212);
+    private static readonly Point MousePadC = new(196, 235);
+    private static readonly Point MousePadD = new(115, 215);
 
     // 保持鼠标垫已有的尺寸、位置和角度不变。
     private const double PadPivotX = 127, PadPivotY = 203;
