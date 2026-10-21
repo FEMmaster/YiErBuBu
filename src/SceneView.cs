@@ -86,9 +86,16 @@ internal sealed class SceneView : FrameworkElement
             _nextYierBlink = now.AddSeconds(2.5 + _random.NextDouble() * 5);
         }
         // 待机爪子靠近肩膀；肩膀与人物使用完全相同的旋转坐标。
-        Point bubuRest = RestPaw(ShoulderWorld(BubuBox, BubuShoulderUV), -12, 13);
-        Point yierLeftRest = RestPaw(ShoulderWorld(YierBox, YierLeftShoulderUV), -11, 14);
-        Point yierRightRest = RestPaw(ShoulderWorld(YierBox, YierRightShoulderUV), 11, 14);
+
+        Point bubuRest = RestPaw(
+            ShoulderWorld(BubuBox, BubuShoulderUV), -4, 6);
+        
+        Point yierLeftRest = RestPaw(
+            ShoulderWorld(YierBox, YierLeftShoulderUV), -4, 6);
+        
+        Point yierRightRest = RestPaw(
+            ShoulderWorld(YierBox, YierRightShoulderUV), 4, 6);
+
 
         if (!_pawsInitialized)
         {
