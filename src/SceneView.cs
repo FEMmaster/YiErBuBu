@@ -52,8 +52,8 @@ internal sealed class SceneView : FrameworkElement
     // 鼠标垫的唯一几何定义。鼠标中心从这四个顶点自动计算。
     private static readonly Point MousePadA = new(151, 175);
     private static readonly Point MousePadB = new(227, 188);
-    private static readonly Point MousePadC = new(196, 235);
-    private static readonly Point MousePadD = new(115, 215);
+    private static readonly Point MousePadC = new(197, 235);
+    private static readonly Point MousePadD = new(111, 215);
 
     // 保持鼠标垫已有的尺寸、位置和角度不变。
     private const double PadPivotX = 127, PadPivotY = 203;
@@ -87,13 +87,13 @@ internal sealed class SceneView : FrameworkElement
         }
         // 待机爪子靠近肩膀；肩膀与人物使用完全相同的旋转坐标。
         Point bubuRest = RestPaw(
-            ShoulderWorld(BubuBox, BubuShoulderUV), -10, 3);
+            ShoulderWorld(BubuBox, BubuShoulderUV), -2, 3);
         
         Point yierLeftRest = RestPaw(
             ShoulderWorld(YierBox, YierLeftShoulderUV), -2, 3);
         
         Point yierRightRest = RestPaw(
-            ShoulderWorld(YierBox, YierRightShoulderUV), 4, 6);
+            ShoulderWorld(YierBox, YierRightShoulderUV), 3, 4);
 
         if (!_pawsInitialized)
         {
@@ -228,7 +228,7 @@ internal sealed class SceneView : FrameworkElement
                 
         // 2. 绘制可以自由伸缩的手臂
         Point restingBubuPaw = RestPaw(
-            ShoulderWorld(BubuBox, BubuOtherShoulderUV), 2, 3);
+            ShoulderWorld(BubuBox, BubuOtherShoulderUV), -3, 3);
         
 
         // 所有肩膀使用相同的角色旋转+偏移计算。
