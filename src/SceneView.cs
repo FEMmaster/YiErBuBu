@@ -228,7 +228,7 @@ internal sealed class SceneView : FrameworkElement
                 
         // 2. 绘制可以自由伸缩的手臂
         Point restingBubuPaw = RestPaw(
-            ShoulderWorld(BubuBox, BubuOtherShoulderUV), -3, 3);
+            ShoulderWorld(BubuBox, BubuOtherShoulderUV), -15, 3);
         
 
         // 所有肩膀使用相同的角色旋转+偏移计算。
