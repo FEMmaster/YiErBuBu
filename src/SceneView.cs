@@ -40,7 +40,7 @@ internal sealed class SceneView : FrameworkElement
     
     // 肩膀相对位置，取值通常为 0~1
     private static readonly Point BubuShoulderUV = new(0.30, 0.84);
-    private static readonly Point BubuOtherShoulderUV = new(0.77, 0.87);
+    private static readonly Point BubuOtherShoulderUV = new(0.76, 0.88);
     
     private static readonly Point YierLeftShoulderUV = new(0.25, 0.87);
     private static readonly Point YierRightShoulderUV = new(0.76, 0.87);
@@ -87,13 +87,13 @@ internal sealed class SceneView : FrameworkElement
         }
         // 待机爪子靠近肩膀；肩膀与人物使用完全相同的旋转坐标。
         Point bubuRest = RestPaw(
-            ShoulderWorld(BubuBox, BubuShoulderUV), -5, 3);
+            ShoulderWorld(BubuBox, BubuShoulderUV), -10, 3);
         
         Point yierLeftRest = RestPaw(
             ShoulderWorld(YierBox, YierLeftShoulderUV), -2, 3);
         
         Point yierRightRest = RestPaw(
-            ShoulderWorld(YierBox, YierRightShoulderUV), 2, 3);
+            ShoulderWorld(YierBox, YierRightShoulderUV), 4, 6);
 
         if (!_pawsInitialized)
         {
