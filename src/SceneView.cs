@@ -39,7 +39,7 @@ internal sealed class SceneView : FrameworkElement
     private static readonly Rect YierBox = new(280, 65, 136, 138);
     
     // 肩膀相对位置，取值通常为 0~1
-    private static readonly Point BubuShoulderUV = new(0.32, 0.85);
+    private static readonly Point BubuShoulderUV = new(0.30, 0.84);
     private static readonly Point BubuOtherShoulderUV = new(0.77, 0.87);
     
     private static readonly Point YierLeftShoulderUV = new(0.25, 0.87);
@@ -86,16 +86,14 @@ internal sealed class SceneView : FrameworkElement
             _nextYierBlink = now.AddSeconds(2.5 + _random.NextDouble() * 5);
         }
         // 待机爪子靠近肩膀；肩膀与人物使用完全相同的旋转坐标。
-
         Point bubuRest = RestPaw(
-            ShoulderWorld(BubuBox, BubuShoulderUV), -4, 6);
+            ShoulderWorld(BubuBox, BubuShoulderUV), -5, 3);
         
         Point yierLeftRest = RestPaw(
-            ShoulderWorld(YierBox, YierLeftShoulderUV), -4, 6);
+            ShoulderWorld(YierBox, YierLeftShoulderUV), -2, 3);
         
         Point yierRightRest = RestPaw(
-            ShoulderWorld(YierBox, YierRightShoulderUV), 4, 6);
-
+            ShoulderWorld(YierBox, YierRightShoulderUV), 2, 3);
 
         if (!_pawsInitialized)
         {
@@ -230,7 +228,7 @@ internal sealed class SceneView : FrameworkElement
                 
         // 2. 绘制可以自由伸缩的手臂
         Point restingBubuPaw = RestPaw(
-    ShoulderWorld(BubuBox, BubuOtherShoulderUV), 4, 6);
+            ShoulderWorld(BubuBox, BubuOtherShoulderUV), 2, 3);
         
 
         // 所有肩膀使用相同的角色旋转+偏移计算。
